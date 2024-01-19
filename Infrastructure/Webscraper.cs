@@ -1,4 +1,6 @@
-﻿using PuppeteerExtraSharp;
+﻿using HtmlAgilityPack;
+using Microsoft.AspNetCore.Html;
+using PuppeteerExtraSharp;
 using PuppeteerExtraSharp.Plugins.AnonymizeUa;
 using PuppeteerExtraSharp.Plugins.ExtraStealth;
 using PuppeteerSharp;
@@ -45,6 +47,38 @@ namespace HLTV_API.Infrastructure
             await page.CloseAsync();
 
             return html;
+        }
+
+        public HtmlDocument ConvertToHtml(string htmlString)
+        {
+            var html = new HtmlDocument();
+            html.LoadHtml(htmlString);
+            return html;
+        }
+
+        public List<HtmlNode?> GetChildrenByClass(HtmlDocument html, string className)
+        {
+            return html.DocumentNode.Descendants(0).Where(x => x.HasClass(className)).ToList();
+        }
+
+        public List<HtmlNode?> GetChildrenByClass(HtmlNode node, string className)
+        {
+            return node.Descendants(0).Where(x => x.HasClass(className)).ToList();
+        }
+
+        public HtmlNode? GetChildByClass(HtmlDocument html, string className)
+        {
+            return html.DocumentNode.Descendants(0).FirstOrDefault(x => x.HasClass(className));
+        }
+
+        public HtmlNode? GetChildByClass(HtmlNode node, string className)
+        {
+            return node.Descendants(0).FirstOrDefault(x => x.HasClass(className));
+        }
+
+        public string GetInnerText(HtmlNode node)
+        {
+            return node.InnerText.Trim();
         }
     }
 }

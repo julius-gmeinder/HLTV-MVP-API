@@ -7,22 +7,16 @@ namespace HLTV_API.Controllers
     [ApiController]
     public class MatchesController : ControllerBase
     {
-        private readonly IWebscraperRepo _webscraperRepo;
-        public MatchesController(IWebscraperRepo webscraperRepo)
+        private readonly IMatchesRepo _matches;
+        public MatchesController(IMatchesRepo matches)
         {
-            _webscraperRepo = webscraperRepo;
+            _matches = matches;
         }
 
-        [HttpGet("")]
+        [HttpGet("live")]
         public async Task<IActionResult> GetLiveMatchesAsync()
         {
-            return Ok(await _webscraperRepo.GetLiveMatchesAsync());
-        }
-
-        [HttpGet("test")]
-        public async Task<IActionResult> TestAsync()
-        {
-            return Ok("gulup");
+            return Ok(await _matches.GetLiveMatchesAsync());
         }
     }
 }

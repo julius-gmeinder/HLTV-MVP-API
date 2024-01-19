@@ -12,7 +12,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddSingleton<Webscraper>();
-builder.Services.AddScoped<IWebscraperRepo, WebscraperRepo>();
+builder.Services.AddScoped<IMatchesRepo, MatchesRepo>();
 
 var app = builder.Build();
 
