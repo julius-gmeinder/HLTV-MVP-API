@@ -1,5 +1,4 @@
 ﻿using HtmlAgilityPack;
-using Microsoft.AspNetCore.Html;
 using PuppeteerExtraSharp;
 using PuppeteerExtraSharp.Plugins.AnonymizeUa;
 using PuppeteerExtraSharp.Plugins.ExtraStealth;

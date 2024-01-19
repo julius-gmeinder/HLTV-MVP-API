@@ -11,7 +11,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddSingleton<Webscraper>();
+builder.Services.AddScoped<Webscraper>();
 builder.Services.AddScoped<IMatchesRepo, MatchesRepo>();
 
 var app = builder.Build();
