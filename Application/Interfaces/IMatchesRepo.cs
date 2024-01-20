@@ -5,5 +5,6 @@ namespace HLTV_API.Application.Interfaces
     public interface IMatchesRepo
     {
         public Task<List<LiveMatch>> GetLiveMatchesAsync();
+        public Task<List<UpcomingMatch>> GetUpcomingMatchesAsync();
     }
 }

@@ -35,6 +35,8 @@ namespace HLTV_API.Infrastructure
         {
             var page = await _browser.NewPageAsync();
 
+            await page.EmulateTimezoneAsync("Europe/Vienna");
+
             const string customUserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36 OPR/105.0.0.0";
             await page.SetUserAgentAsync(customUserAgent);
 
@@ -73,11 +75,6 @@ namespace HLTV_API.Infrastructure
         public HtmlNode? GetChildByClass(HtmlNode node, string className)
         {
             return node.Descendants(0).FirstOrDefault(x => x.HasClass(className));
-        }
-
-        public string GetInnerText(HtmlNode node)
-        {
-            return node.InnerText.Trim();
         }
     }
 }

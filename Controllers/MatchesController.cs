@@ -18,5 +18,11 @@ namespace HLTV_API.Controllers
         {
             return Ok(await _matches.GetLiveMatchesAsync());
         }
+
+        [HttpGet("upcoming")]
+        public async Task<IActionResult> GetUpcomingMatchesAsync()
+        {
+            return Ok(await _matches.GetUpcomingMatchesAsync());
+        }
     }
 }
