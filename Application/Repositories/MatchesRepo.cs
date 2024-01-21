@@ -83,7 +83,7 @@ namespace HLTV_API.Application.Repositories
                 foreach (var matchNode in matchNodes)
                 {
                     if (matchNode == null)
-                        continue;
+                        continue; 
 
                     var teamNameNodes = _scraper.GetChildrenByClass(matchNode, "matchTeamName");
                     if (teamNameNodes.Count < 2)
