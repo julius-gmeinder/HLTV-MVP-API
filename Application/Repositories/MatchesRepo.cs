@@ -130,11 +130,18 @@ namespace HLTV_API.Application.Repositories
                         .Contains(x.TeamX.ToLower()) || filter.Teams.Contains(x.TeamY.ToLower()))
                         .ToList();
 
-            if(filter.DateFrom != null && filter.DateTo != null)
-                matches = matches.Where(x => x.Date >= filter.DateFrom && x.Date <= filter.DateTo).ToList();
+            if(filter.From != null && filter.To != null)
+            {
+                matches = matches.Where(match => 
+                    {
+                        DateTime matchDateTime = new DateTime(match.Date.Year, match.Date.Month, match.Date.Day, match.Time.Hour, match.Time.Minute, match.Time.Second);
 
-            if (filter.TimeFrom != null && filter.TimeTo != null)
-                matches = matches.Where(x => x.Time >= filter.TimeFrom && x.Time <= filter.TimeTo).ToList();
+                        if(filter.From <= matchDateTime && matchDateTime <= filter.To)
+                            return true;
+                        return false;
+                    }
+                ).ToList();
+            }
 
             return matches;
         }

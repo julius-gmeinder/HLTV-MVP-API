@@ -6,11 +6,7 @@
         public int? Stars { get; set; }
         public List<string>? Teams { get; set; } = null!;
 
-        public DateOnly? DateFrom { get; set; }
-        public DateOnly? DateTo { get; set; }
-
-
-        public TimeOnly? TimeFrom { get; set; }
-        public TimeOnly? TimeTo { get; set; }
+        public DateTime? From { get; set; }
+        public DateTime? To { get; set; }
     }
 }
