@@ -102,12 +102,13 @@ namespace HLTV_API.Application.Repositories
             if (filter.Event != null)
                 matches = matches.Where(x => x.Event.ToLower().Contains(filter.Event.ToLower())).ToList();
 
-            if (filter.Teams != null)
-                matches = matches.Where(x => 
-                    filter.Teams
-                        .ConvertAll(x => x.ToLower())
-                        .Contains(x.TeamX.Name.ToLower()) || filter.Teams.Contains(x.TeamY.Name.ToLower()))
-                        .ToList();
+            if (filter.Teams != null && filter.Teams.Count > 0)
+                matches = matches.Where(match => {
+                    foreach (var team in filter.Teams.ConvertAll(team => team.ToLower()))
+                        if (match.TeamX.Name.ToLower() == team || match.TeamY.Name.ToLower() == team)
+                            return true;
+                    return false;
+                }).ToList();
 
             return matches;
         }
@@ -123,24 +124,23 @@ namespace HLTV_API.Application.Repositories
             if (filter.Event != null)
                 matches = matches.Where(x => x.Event.ToLower().Contains(filter.Event.ToLower())).ToList();
 
-            if (filter.Teams != null)
-                matches = matches.Where(x =>
-                    filter.Teams
-                        .ConvertAll(x => x.ToLower())
-                        .Contains(x.TeamX.ToLower()) || filter.Teams.Contains(x.TeamY.ToLower()))
-                        .ToList();
+            if (filter.Teams != null && filter.Teams.Count > 0)
+                matches = matches.Where(match => {
+                        foreach (var team in filter.Teams.ConvertAll(team => team.ToLower()))
+                            if (match.TeamX.ToLower() == team || match.TeamY.ToLower() == team)
+                                return true;
+                        return false;
+                }).ToList();
 
-            if(filter.From != null && filter.To != null)
+            if (filter.From != null && filter.To != null)
             {
-                matches = matches.Where(match => 
-                    {
+                matches = matches.Where(match => {
                         DateTime matchDateTime = new DateTime(match.Date.Year, match.Date.Month, match.Date.Day, match.Time.Hour, match.Time.Minute, match.Time.Second);
 
                         if(filter.From <= matchDateTime && matchDateTime <= filter.To)
                             return true;
                         return false;
-                    }
-                ).ToList();
+                }).ToList();
             }
 
             return matches;
