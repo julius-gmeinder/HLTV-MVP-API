@@ -1,4 +1,5 @@
 ﻿using HLTV_API.Application.Interfaces;
+using HLTV_API.Domain.DTOs;
 using HLTV_API.Domain.Models;
 using HLTV_API.Infrastructure;
 using HtmlAgilityPack;
@@ -14,7 +15,7 @@ namespace HLTV_API.Application.Repositories
             _scraper = scraper;
         }
 
-        public async Task<List<LiveMatch>> GetLiveMatchesAsync()
+        public async Task<List<LiveMatch>> GetLiveMatchesAsync(LiveMatchFilterDTO? filter)
         {
             List<LiveMatch> matches = new();
 
@@ -42,10 +43,10 @@ namespace HLTV_API.Application.Repositories
                 });
             }
 
-            return matches;
+            return LiveMatchesFilter(matches, filter);
         }
 
-        public async Task<List<UpcomingMatch>> GetUpcomingMatchesAsync()
+        public async Task<List<UpcomingMatch>> GetUpcomingMatchesAsync(UpcomingMatchFilterDTO? filter)
         {
             List<UpcomingMatch> matches = new();
 
@@ -87,9 +88,57 @@ namespace HLTV_API.Application.Repositories
                     });
                 }
             }
+            return UpcomingMatchesFilter(matches, filter);
+        }
+
+        private List<LiveMatch> LiveMatchesFilter(List<LiveMatch> matches, LiveMatchFilterDTO? filter)
+        {
+            if (filter == null)
+                return matches;
+
+            if (filter.Stars != null)
+                matches = matches.Where(x => x.Stars >= filter.Stars).ToList();
+
+            if (filter.Event != null)
+                matches = matches.Where(x => x.Event.ToLower().Contains(filter.Event.ToLower())).ToList();
+
+            if (filter.Teams != null)
+                matches = matches.Where(x => 
+                    filter.Teams
+                        .ConvertAll(x => x.ToLower())
+                        .Contains(x.TeamX.Name.ToLower()) || filter.Teams.Contains(x.TeamY.Name.ToLower()))
+                        .ToList();
+
             return matches;
         }
-        
+
+        private List<UpcomingMatch> UpcomingMatchesFilter(List<UpcomingMatch> matches, UpcomingMatchFilterDTO? filter)
+        {
+            if (filter == null)
+                return matches;
+
+            if (filter.Stars != null)
+                matches = matches.Where(x => x.Stars >= filter.Stars).ToList();
+
+            if (filter.Event != null)
+                matches = matches.Where(x => x.Event.ToLower().Contains(filter.Event.ToLower())).ToList();
+
+            if (filter.Teams != null)
+                matches = matches.Where(x =>
+                    filter.Teams
+                        .ConvertAll(x => x.ToLower())
+                        .Contains(x.TeamX.ToLower()) || filter.Teams.Contains(x.TeamY.ToLower()))
+                        .ToList();
+
+            if(filter.DateFrom != null && filter.DateTo != null)
+                matches = matches.Where(x => x.Date >= filter.DateFrom && x.Date <= filter.DateTo).ToList();
+
+            if (filter.TimeFrom != null && filter.TimeTo != null)
+                matches = matches.Where(x => x.Time >= filter.TimeFrom && x.Time <= filter.TimeTo).ToList();
+
+            return matches;
+        }
+
         private string GetMatchUrl(HtmlNode node)
         {
             return new Uri(Global.BASE_URL, _scraper.GetChildByClass(node, "match")!.GetAttributeValue("href", "")).AbsoluteUri;

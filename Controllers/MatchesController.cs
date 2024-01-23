@@ -1,4 +1,5 @@
 ﻿using HLTV_API.Application.Interfaces;
+using HLTV_API.Domain.DTOs;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HLTV_API.Controllers
@@ -14,15 +15,15 @@ namespace HLTV_API.Controllers
         }
 
         [HttpGet("live")]
-        public async Task<IActionResult> GetLiveMatchesAsync()
+        public async Task<IActionResult> GetLiveMatchesAsync([FromQuery] LiveMatchFilterDTO? filter)
         {
-            return Ok(await _matches.GetLiveMatchesAsync());
+            return Ok(await _matches.GetLiveMatchesAsync(filter));
         }
 
         [HttpGet("upcoming")]
-        public async Task<IActionResult> GetUpcomingMatchesAsync()
+        public async Task<IActionResult> GetUpcomingMatchesAsync([FromQuery] UpcomingMatchFilterDTO? filter)
         {
-            return Ok(await _matches.GetUpcomingMatchesAsync());
+            return Ok(await _matches.GetUpcomingMatchesAsync(filter));
         }
     }
 }
