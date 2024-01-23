@@ -2,12 +2,6 @@
 using HLTV_API.Domain.Models;
 using HLTV_API.Infrastructure;
 using HtmlAgilityPack;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.HttpResults;
-using System.IO;
-using System.Runtime.CompilerServices;
-using System.Xml.Linq;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace HLTV_API.Application.Repositories
 {
@@ -38,23 +32,13 @@ namespace HLTV_API.Application.Repositories
 
                 matches.Add(new LiveMatch()
                 {
-                    Url = new Uri(Global.BASE_URL, _scraper.GetChildByClass(matchNode, "match")!.GetAttributeValue("href", "")).AbsoluteUri,
-                    Event = _scraper.GetChildByClass(matchNode, "matchEventName")!.InnerText,
-                    Type = _scraper.GetChildByClass(matchNode, "matchMeta")!.InnerText,
-                    
-                    TeamX = new LiveMatch.Team()
-                    {
-                        Name = _scraper.GetChildByClass(teams[0]!, "matchTeamName")!.InnerText,
-                        Score = _scraper.GetChildByClass(teams[0]!, "currentMapScore")!.InnerText.Trim(),
-                        MapScore = _scraper.GetChildByClass(teams[0]!, "mapScore")?.Element("span").InnerText
-                    },
+                    Url = GetMatchUrl(matchNode),
+                    Event = GetMatchEvent(matchNode),
+                    Type = GetMatchType(matchNode),
+                    Stars = GetMatchStars(matchNode),
 
-                    TeamY = new LiveMatch.Team()
-                    {
-                        Name = _scraper.GetChildByClass(teams[1]!, "matchTeamName")!.InnerText,
-                        Score = _scraper.GetChildByClass(teams[1]!, "currentMapScore")!.InnerText.Trim(),
-                        MapScore = _scraper.GetChildByClass(teams[1]!, "mapScore")?.Element("span").InnerText
-                    },
+                    TeamX = GetLiveMatchTeam(teams[0]!),
+                    TeamY = GetLiveMatchTeam(teams[1]!)
                 });
             }
 
@@ -75,35 +59,79 @@ namespace HLTV_API.Application.Repositories
                 if (upcomingMatchesNode == null)
                     continue;
 
-                var dateNode = _scraper.GetChildByClass(upcomingMatchesNode, "matchDayHeadline");
-                string dateString = dateNode!.InnerText.Substring(dateNode.InnerText.Length - 10, 10);
-                var matchDate = DateOnly.ParseExact(dateString, "yyyy-MM-dd", null);
+                var date = GetUpcomingMatchDate(upcomingMatchesNode);
 
                 var matchNodes = _scraper.GetChildrenByClass(upcomingMatchesNode, "upcomingMatch");
+
                 foreach (var matchNode in matchNodes)
                 {
                     if (matchNode == null)
                         continue;
 
-                    var teamNameNodes = _scraper.GetChildrenByClass(matchNode, "matchTeamName");
+                    var teamNameNodes = _scraper.GetChildrenByClass(matchNode, "matchTeamName").Select(x => x!.InnerText).ToList();
                     if (teamNameNodes.Count < 2)
                         continue;
 
-                    var matchTime = TimeOnly.Parse(_scraper.GetChildByClass(matchNode, "matchTime")!.InnerText);
-
                     matches.Add(new UpcomingMatch()
                     {
-                        Url = new Uri(Global.BASE_URL, _scraper.GetChildByClass(matchNode, "match")!.GetAttributeValue("href", "")).AbsoluteUri,
-                        Event = _scraper.GetChildByClass(matchNode, "matchEventName")!.InnerText,
-                        Type = _scraper.GetChildByClass(matchNode, "matchMeta")!.InnerText,
-                        Date = matchDate,
-                        Time = matchTime,
-                        TeamX = teamNameNodes[0]!.InnerText,
-                        TeamY = teamNameNodes[1]!.InnerText,
+                        Url = GetMatchUrl(matchNode),
+                        Event = GetMatchEvent(matchNode),
+                        Type = GetMatchType(matchNode),
+                        Stars = GetMatchStars(matchNode),
+
+                        TeamX = teamNameNodes[0]!,
+                        TeamY = teamNameNodes[1]!,
+
+                        Date = date,
+                        Time = GetUpcomingMatchTime(matchNode)
                     });
                 }
             }
             return matches;
+        }
+        
+        private string GetMatchUrl(HtmlNode node)
+        {
+            return new Uri(Global.BASE_URL, _scraper.GetChildByClass(node, "match")!.GetAttributeValue("href", "")).AbsoluteUri;
+        }
+
+        private string GetMatchEvent(HtmlNode node)
+        {
+            return _scraper.GetChildByClass(node, "matchEventName")!.InnerText;
+        }
+
+        private string GetMatchType(HtmlNode node)
+        {
+            return _scraper.GetChildByClass(node, "matchMeta")!.InnerText;
+        }
+
+        private int GetMatchStars(HtmlNode node)
+        {
+            var starsNode = _scraper.GetChildByClass(node, "matchRating");
+            int starsCount = Convert.ToInt32(5 - _scraper.GetChildrenByClass(starsNode!, "faded").Count);
+            return starsCount;
+        }
+
+        private LiveMatch.Team GetLiveMatchTeam(HtmlNode node)
+        {
+            return new LiveMatch.Team()
+            {
+                Name = _scraper.GetChildByClass(node!, "matchTeamName")!.InnerText,
+                Score = Convert.ToInt32(_scraper.GetChildByClass(node!, "currentMapScore")!.InnerText.Trim()),
+                MapScore = Convert.ToInt32(_scraper.GetChildByClass(node!, "mapScore")?.Element("span").InnerText)
+            };
+        }
+
+        private DateOnly GetUpcomingMatchDate(HtmlNode node)
+        {
+            var dateNode = _scraper.GetChildByClass(node, "matchDayHeadline");
+            string dateString = dateNode!.InnerText.Substring(dateNode.InnerText.Length - 10, 10);
+            return DateOnly.ParseExact(dateString, "yyyy-MM-dd", null);
+        }
+
+        private TimeOnly GetUpcomingMatchTime(HtmlNode node)
+        {
+            return TimeOnly.Parse(_scraper.GetChildByClass(node, "matchTime")!.InnerText);
         }
     }
 }
