@@ -8,7 +8,7 @@ namespace HLTV_API.Domain.Models
         public class Team
         {
             public string Name { get; set; } = null!;
-            public int Score { get; set; }
+            public int? Score { get; set; }
             public int? MapScore { get; set; }
         }
 

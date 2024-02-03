@@ -170,11 +170,17 @@ namespace HLTV_API.Application.Repositories
 
         private LiveMatch.Team GetLiveMatchTeam(HtmlNode node)
         {
+            var scoreString = _scraper.GetChildByClass(node!, "currentMapScore")!.InnerText.Trim();
+            int? score = (scoreString == "-" || scoreString == null) ? null : Convert.ToInt32(scoreString);
+
+            var mapScoreString = _scraper.GetChildByClass(node!, "mapScore")?.Element("span").InnerText;
+            int? mapScore = (mapScoreString == null || mapScoreString == "") ? null : Convert.ToInt32(mapScoreString);
+
             return new LiveMatch.Team()
             {
                 Name = _scraper.GetChildByClass(node!, "matchTeamName")!.InnerText,
-                Score = Convert.ToInt32(_scraper.GetChildByClass(node!, "currentMapScore")!.InnerText.Trim()),
-                MapScore = Convert.ToInt32(_scraper.GetChildByClass(node!, "mapScore")?.Element("span").InnerText)
+                Score = score,
+                MapScore = mapScore
             };
         }
 
