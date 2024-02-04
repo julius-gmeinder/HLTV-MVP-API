@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace HLTV_API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/hltv/[controller]")]
     [ApiController]
     public class MatchesController : ControllerBase
     {

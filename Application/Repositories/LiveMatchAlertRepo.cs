@@ -17,13 +17,11 @@ namespace HLTV_API.Application.Repositories
 
         public async Task SetupAsync(SetupLiveMatchAlertDTO setup)
         {
-            var newGuild = new Guild()
-            {
-                GuildId = setup.GuildId,
-                LiveMatchAlertChannelId = setup.LiveMatchAlertChannelId
-            };
+            var guild = await _guilds.GetGuildAsync(setup.GuildId);
+            if (guild == null)
+                return;
 
-            await _db.Guilds.AddAsync(newGuild);
+            guild.LiveMatchAlertChannelId = setup.LiveMatchAlertChannelId;
             await _db.SaveChangesAsync();
         }
 
@@ -33,7 +31,7 @@ namespace HLTV_API.Application.Repositories
             if (guild == null)
                 return;
 
-            _db.Guilds.Remove(guild);
+            guild.LiveMatchAlertChannelId = null;
             await _db.SaveChangesAsync();
         }
     }

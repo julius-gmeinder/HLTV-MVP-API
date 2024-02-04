@@ -1,11 +1,10 @@
 ﻿using HLTV_API.Application.Interfaces;
 using HLTV_API.Domain.DTOs;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HLTV_API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/bot/[controller]")]
     [ApiController]
     public class LiveMatchAlertsController : ControllerBase
     {
@@ -17,19 +16,19 @@ namespace HLTV_API.Controllers
             _liveAlerts = liveAlerts;
         }
 
-        [HttpPost("add")]
-        public async Task<IActionResult> SetupLiveMatchAlertAsync(SetupLiveMatchAlertDTO setupDTO)
+        [HttpPatch("add")]
+        public async Task<IActionResult> SetupAsync(SetupLiveMatchAlertDTO setupDTO)
         {
             var existingGuild = await _guildsRepo.GetGuildAsync(setupDTO.GuildId);
-            if (existingGuild != null)
-                return Conflict();
+            if (existingGuild == null)
+                return NotFound();
 
             await _liveAlerts.SetupAsync(setupDTO);
             return NoContent();
         }
 
-        [HttpPost("remove")]
-        public async Task<IActionResult> RemoveLiveMatchAlertSetupAsync(string guildId)
+        [HttpPatch("remove")]
+        public async Task<IActionResult> RemoveAsync(string guildId)
         {
             var existingGuild = await _guildsRepo.GetGuildAsync(guildId);
             if (existingGuild == null)
