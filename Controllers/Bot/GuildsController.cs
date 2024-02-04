@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace HLTV_API.Controllers
+namespace HLTV_API.Controllers.Bot
 {
     [Route("api/bot/[controller]")]
     [ApiController]

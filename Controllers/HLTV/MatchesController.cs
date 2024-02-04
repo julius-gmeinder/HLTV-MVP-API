@@ -2,7 +2,7 @@
 using HLTV_API.Domain.DTOs;
 using Microsoft.AspNetCore.Mvc;
 
-namespace HLTV_API.Controllers
+namespace HLTV_API.Controllers.HLTV
 {
     [Route("api/hltv/[controller]")]
     [ApiController]
