@@ -2,6 +2,7 @@
 using HLTV_API.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -9,9 +10,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HLTV_API.Migrations
 {
     [DbContext(typeof(HltvContext))]
-    partial class HltvContextModelSnapshot : ModelSnapshot
+    [Migration("20240204202815_BasicGuildEntity")]
+    partial class BasicGuildEntity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

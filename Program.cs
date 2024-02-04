@@ -20,6 +20,8 @@ builder.Services.AddDbContextPool<HltvContext>(options =>
 
 builder.Services.AddScoped<Webscraper>();
 builder.Services.AddScoped<IMatchesRepo, MatchesRepo>();
+builder.Services.AddScoped<IGuildsRepo, GuildsRepo>();
+builder.Services.AddScoped<ILiveMatchAlertRepo, LiveMatchAlertRepo>();
 
 var app = builder.Build();
 

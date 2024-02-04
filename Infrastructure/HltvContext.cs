@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using HLTV_API.Domain.Models;
+using Microsoft.EntityFrameworkCore;
 using System;
 
 namespace HLTV_API.Infrastructure
@@ -10,6 +11,6 @@ namespace HLTV_API.Infrastructure
 
         }
 
-        //public virtual DbSet<X> Guild { get; set; } = null!;
+        public virtual DbSet<Guild> Guilds { get; set; } = null!;
     }
 }
