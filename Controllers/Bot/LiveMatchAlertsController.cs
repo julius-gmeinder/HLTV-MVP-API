@@ -17,7 +17,7 @@ namespace HLTV_API.Controllers.Bot
         }
 
         [HttpPatch("add")]
-        public async Task<IActionResult> SetupAsync(SetupLiveMatchAlertDTO setupDTO)
+        public async Task<IActionResult> SetupAsync([FromBody] SetupLiveMatchAlertDTO setupDTO)
         {
             var existingGuild = await _guildsRepo.GetGuildAsync(setupDTO.GuildId);
             if (existingGuild == null)
@@ -28,7 +28,7 @@ namespace HLTV_API.Controllers.Bot
         }
 
         [HttpPatch("remove")]
-        public async Task<IActionResult> RemoveAsync(string guildId)
+        public async Task<IActionResult> RemoveAsync([FromQuery] string guildId)
         {
             var existingGuild = await _guildsRepo.GetGuildAsync(guildId);
             if (existingGuild == null)

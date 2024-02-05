@@ -5,8 +5,9 @@ namespace HLTV_API.Application.Interfaces
 {
     public interface IGuildsRepo
     {
+        public Task<List<Guild>> GetGuildsAsync();
         public Task<Guild?> GetGuildAsync(string GuildId);
-        public Task AddAsync(string guildId);
-        public Task RemoveAsync(string guildId);
+        public Task AddGuildAsync(string guildId);
+        public Task RemoveGuildAsync(string guildId);
     }
 }

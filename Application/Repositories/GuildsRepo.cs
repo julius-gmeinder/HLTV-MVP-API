@@ -14,12 +14,17 @@ namespace HLTV_API.Application.Repositories
             _db = db;
         }
 
+        public async Task<List<Guild>> GetGuildsAsync()
+        {
+            return await _db.Guilds.ToListAsync();
+        }
+
         public async Task<Guild?> GetGuildAsync(string guildId)
         {
             return await _db.Guilds.FirstOrDefaultAsync(x => x.GuildId == guildId);
         }
 
-        public async Task AddAsync(string guildId)
+        public async Task AddGuildAsync(string guildId)
         {
             await _db.Guilds.AddAsync(new Guild()
             {
@@ -28,7 +33,7 @@ namespace HLTV_API.Application.Repositories
             await _db.SaveChangesAsync();
         }
 
-        public async Task RemoveAsync(string guildId)
+        public async Task RemoveGuildAsync(string guildId)
         {
             var existingGuild = await GetGuildAsync(guildId);
             if (existingGuild == null)
