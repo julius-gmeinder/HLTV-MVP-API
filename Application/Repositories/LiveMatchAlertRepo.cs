@@ -15,6 +15,18 @@ namespace HLTV_API.Application.Repositories
             _guilds = guilds;
         }
 
+        public async Task<List<string>> GetChannelsAsync()
+        {
+            var guilds = await _guilds.GetGuildsAsync();
+
+            var channels = guilds
+                .Where(x => x.LiveMatchAlertChannelId != null)
+                .Select(x => x.LiveMatchAlertChannelId)
+                .ToList();
+
+            return channels!;
+        }
+
         public async Task SetupAsync(SetupLiveMatchAlertDTO setup)
         {
             var guild = await _guilds.GetGuildAsync(setup.GuildId);

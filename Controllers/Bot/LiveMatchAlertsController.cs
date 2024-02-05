@@ -16,12 +16,21 @@ namespace HLTV_API.Controllers.Bot
             _liveAlerts = liveAlerts;
         }
 
-        [HttpPatch("add")]
+        [HttpGet("")]
+        public async Task<IActionResult> GetChannelsAsync()
+        {
+            return Ok(await _liveAlerts.GetChannelsAsync());
+        }
+
+        [HttpPatch("setup")]
         public async Task<IActionResult> SetupAsync([FromBody] SetupLiveMatchAlertDTO setupDTO)
         {
             var existingGuild = await _guildsRepo.GetGuildAsync(setupDTO.GuildId);
             if (existingGuild == null)
                 return NotFound();
+
+            if (existingGuild.LiveMatchAlertChannelId != null)
+                return Conflict();
 
             await _liveAlerts.SetupAsync(setupDTO);
             return NoContent();
